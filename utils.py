@@ -124,7 +124,7 @@ def sparsifyDynamics(Theta, dx, Lambda):
     m,n = dx.shape  #(248*3)
     Xi = np.dot(np.linalg.pinv(Theta), dx)  #Xi.shape = 10*3
     # lambda is sparasification knob
-    for k in range(10):      ###??
+    for k in range(20):      ###??
         small_idx = (abs(Xi) < Lambda)
         big_idx = (abs(Xi) >= Lambda)
         Xi[small_idx] = 0
@@ -135,17 +135,17 @@ def sparsifyDynamics(Theta, dx, Lambda):
 
 
 def sparseGalerkin(t, pop, Xi, polyorder):
-    theta, descr = lib_terms(np.array([pop]).T,3,[])
+    theta, descr = lib_terms(np.array([pop]).T,polyorder,[])
     dpop = theta.dot(Xi)
     return dpop[0]
 
 
-def time_different(dt, dpop, pop):
+def time_different(dt, pop):
     """
     dpop = (6*6000) (species * time)
     centered first order derviate
     """
-    x = np.full_like(dpop, fill_value = np.nan)
+    x = np.full_like(pop, fill_value = np.nan)
     x[:, 1:-1] = (pop[:, 2:] - pop[:, :-2]) / (2*dt)
     x[:,0] = (-11/6 *pop[:,0] + 3* pop[:,1] - 3/2*pop[:,2] + pop[:,3]/3) /dt
     x[:,-1] = (11/6* pop[:,-1] -3* pop[:,-2] + 3/2* pop[:,-3] -pop[:,-4]/3)/dt
@@ -157,7 +157,7 @@ def visual_param(Xi, descr):
     small_idx = abs(Xi) < 1e-4
     Xi[small_idx] = 0
     new_set =  [x.replace('(', '').replace(']', '') for x in descr] 
-    name_s = ['la', 'lb', 'lr', 'ra', 'rb', 'rr']
+    name_s = descr
     label = []
     for str_ in new_set[1:]:
         idx_ = [int(x) for x in str_.split(') [')[0].split(',')]

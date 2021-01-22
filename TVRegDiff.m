@@ -123,6 +123,7 @@ data = data( : );
 % Get the data size.
 n = length( data );
 
+
 % Default checking. (u0 is done separately within each method.)
 if nargin < 9 || isempty( diagflag )
     diagflag = 1;
@@ -134,7 +135,7 @@ if nargin < 7 || isempty( dx )
     dx = 1 / n;
 end
 if nargin < 6 || isempty( ep )
-    ep = 1e-6;
+    ep = 1e-10;
 end
 if nargin < 5 || isempty( scale )
     scale = 'small';
